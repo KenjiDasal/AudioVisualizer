@@ -73,9 +73,9 @@ function draw() {
       }
     
       if (image_num == 3 && amp < 200){
-        stroke(255, 0, 0);
+        stroke(169, 47, 64);
       } else if (image_num == 4){
-        stroke(255, 255, 0);
+        stroke(46, 56, 242);
       }
     strokeWeight(3);
     noFill();
@@ -261,7 +261,7 @@ function keyPressed() {
             fill(142, 184, 255);
           }
           if (image_num == 3){
-            fill(255, 0, 0);
+            fill(169, 47, 64);
           } 
         
         this.size = 4;
@@ -276,7 +276,7 @@ function keyPressed() {
               }
             
             if (image_num == 4){
-                fill(255, 255, 0);
+                fill(46, 56, 242);
               }
         }
     }
