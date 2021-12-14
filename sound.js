@@ -15,6 +15,8 @@ function preload() {
 
     song1 = loadSound('playlist/01.mp3');
     song2 = loadSound('playlist/02.mp3');
+    song3 = loadSound('playlist/03.mp3');
+    song4 = loadSound('playlist/04.mp3');
 
 
     img[1] = loadImage('images/arcane1.jpg');
@@ -49,13 +51,16 @@ function draw() {
     }
 
     
-
     push();
-    image(img[image_num], 0, 0, width + 100, height + 100);
     if (amp > 200){
         rotate(random(-0.5, 0.5));
+        console.log('shake');
     }
+    image(img[image_num], 0, 0, width + 100, height + 100);
     pop();
+    
+    
+   
 
 
     
@@ -203,8 +208,14 @@ function keyPressed() {
       song = song1;
       image_num = 1;
       console.log(image_num)
+      if(song3.isPlaying()){
+        song3.stop();
+      }
       if(song2.isPlaying()){
         song2.stop();
+      }
+      if(song4.isPlaying()){
+        song4.stop();
       }
       if(!song.isPlaying()){
       song.play();
@@ -218,6 +229,12 @@ function keyPressed() {
       song = song2;
       image_num = 3;
       console.log(image_num)
+      if(song3.isPlaying()){
+        song3.stop();
+      }
+      if(song4.isPlaying()){
+        song4.stop();
+      }
       if(song1.isPlaying()){
         song1.stop();
       }
@@ -231,6 +248,49 @@ function keyPressed() {
     }
     }
   
+    if(keyCode === 51){
+      song = song3;
+      image_num = 1;
+      console.log(image_num)
+      if(song4.isPlaying()){
+        song4.stop();
+      }
+      if(song2.isPlaying()){
+        song2.stop();
+      }
+      if(song1.isPlaying()){
+        song1.stop();
+      }
+      if(!song.isPlaying()){
+      song.play();
+      console.log('isPlaying')
+    }else{
+      song.pause();
+      console.log('isPaused')
+    }
+    }
+    if(keyCode === 52){
+      song = song4;
+      image_num = 3;
+      console.log(image_num)
+      if(song3.isPlaying()){
+        song3.stop();
+      }
+      if(song2.isPlaying()){
+        song2.stop();
+      }
+      if(song1.isPlaying()){
+        song1.stop();
+      }
+      if(!song.isPlaying()){
+      song.play();
+      console.log('isPlaying')
+      console.log(song)
+    }else{
+      song.pause();
+      console.log('isPaused')
+    }
+    }
     if(keyCode === ENTER){
       if(!song.isPlaying()){
         song.play();
