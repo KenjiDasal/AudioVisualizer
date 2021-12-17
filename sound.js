@@ -23,8 +23,10 @@ function preload() {
     img[2] = loadImage('images/arcane2.jpg');
     img[3] = loadImage('images/vi.jpg');
     img[4] = loadImage('images/vi2.jpg');
-    img[5] = loadImage('images/ekko2jpg');
-    img[6] = loadImage('images/ekkojpg');
+    img[5] = loadImage('images/ekko2.jpg');
+    img[6] = loadImage('images/ekko.jpg');
+    img[7] = loadImage('images/caitlyn2.jpg');
+    img[8] = loadImage('images/caitlyn.jpg');
 }
 
 function setup() {
@@ -42,11 +44,11 @@ function draw() {
     var treble = fft.getEnergy(100, 150);
     var mid = fft.getEnergy("mid");
      /*----------  BACKGROUND  ----------*/
-     if (amp > 200 && image_num == 1 || amp > 200 && image_num == 3) {
+     if (amp > 200 && image_num == 1 || amp > 200 && image_num == 3 || amp > 200 && image_num == 5 || amp > 200 && image_num == 7) {
         image_num++;
     }
     if(amp <= 200){
-        if (image_num ==2 || image_num == 4 || image_num == 5) {
+        if (image_num ==2 || image_num == 4 || image_num == 6 || image_num == 8) {
           image_num --;
           console.log(image_num);
          }
@@ -83,6 +85,18 @@ function draw() {
         stroke(169, 47, 64);
       } else if (image_num == 4){
         stroke(46, 56, 242);
+      }
+
+      if (image_num == 5 && amp < 200){
+        stroke(255, 255, 255);
+      } else if (image_num == 6){
+        stroke(57, 255, 20);
+      }
+
+      if (image_num == 7 && amp < 200){
+        stroke(0, 28, 112);
+      } else if (image_num == 8){
+        stroke(107, 0, 189);
       }
     strokeWeight(3);
     noFill();
@@ -325,6 +339,14 @@ function keyPressed() {
           if (image_num == 3){
             fill(169, 47, 64);
           } 
+
+          if (image_num == 5){
+            fill(255, 255, 255);
+          } 
+
+          if (image_num == 7){
+            fill(0, 28, 112);
+          } 
         
         this.size = 4;
         if(cond){
@@ -340,6 +362,14 @@ function keyPressed() {
             if (image_num == 4){
                 fill(46, 56, 242);
               }
+
+            if (image_num == 6){
+              fill(57, 255, 20);
+            }
+
+            if (image_num == 8){
+              fill(107, 0, 189);
+            }
         }
     }
 
