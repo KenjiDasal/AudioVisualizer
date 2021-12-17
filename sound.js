@@ -23,6 +23,8 @@ function preload() {
     img[2] = loadImage('images/arcane2.jpg');
     img[3] = loadImage('images/vi.jpg');
     img[4] = loadImage('images/vi2.jpg');
+    img[5] = loadImage('images/ekko2jpg');
+    img[6] = loadImage('images/ekkojpg');
 }
 
 function setup() {
@@ -250,7 +252,7 @@ function keyPressed() {
   
     if(keyCode === 51){
       song = song3;
-      image_num = 1;
+      image_num = 5;
       console.log(image_num)
       if(song4.isPlaying()){
         song4.stop();
@@ -271,7 +273,7 @@ function keyPressed() {
     }
     if(keyCode === 52){
       song = song4;
-      image_num = 3;
+      image_num = 7;
       console.log(image_num)
       if(song3.isPlaying()){
         song3.stop();
