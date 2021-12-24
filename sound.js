@@ -109,21 +109,21 @@ function draw() {
     for ( t = -1; t <= 1; t += 2) {
     
 
-    /*----------  NORMAL  ----------*/
+    /*----------  MID  ----------*/
     beginShape();
     for( i = 0; i <= 180; i ++) {
          index = floor(map(i, 0, 180, 0, wave.length - 1))
 
-        var r1Min = map(wave[index], -1, 1, 50 ,mid);
+        var r1Min = map(wave[index], -1, 1, 50, mid/2);
         var r1Max = map(wave[index], -1, 1, mid, 0);
 
         var r2Min = map(wave[index] / 2, -1, 1, mid, 50);
-        var r2Max = map(wave[index], -1, 1, 0, mid);    
+        var r2Max = map(wave[index], -1, 1, 0, mid/2);    
 
         var r1 = map(wave[index], -1, 1, r1Min+50, r1Max)
         var r2 = map(wave[index], -1, 1, r2Min, r2Max+50)
 
-        r = r1*2 + r2
+        r = r1 + r2
 
          x = r * sin(i) * t
          y = r * cos(i)
@@ -136,7 +136,7 @@ function draw() {
     for( i = 0; i <= 180; i ++) {
          index = floor(map(i, 0, 180, 0, wave.length - 1))
 
-         r = map(wave[index], -1, 1, bass*2, bass+150)
+         r = map(wave[index], -1, 3, bass, bass+75)
 
          x = r * sin(i) * t
          y = r * cos(i)
@@ -149,7 +149,10 @@ function draw() {
     for( i = 0; i <= 180; i ++) {
         index = floor(map(i, 0, 180, 0, wave.length - 1))
 
-        r = map(wave[index], -1, 1, treble*3, treble+75)
+        r1 = map(wave[index], -1, 1, treble/2, 0)
+        r2 = map(wave[index], -1, 1, 0, treble+50)
+
+        r = r1 + r2        
 
         x = r * sin(i) * t
         y = r * cos(i)
@@ -163,7 +166,7 @@ function draw() {
     
     push();
     rotate(angle);
-    strokeWeight(10);
+    strokeWeight(5);
     arc(0, 0, 25, 25, 100, -50);
     if(amp > 200){
         if(mid > 100){
@@ -175,7 +178,7 @@ function draw() {
     endShape();
 
     push();
-    strokeWeight(5);
+    strokeWeight(2);
     rotate(angle2);
     strokeWeight(5);
     arc(0, 0, 50, 50, 100, -50);
@@ -191,7 +194,7 @@ function draw() {
     beginShape();
     push();
     rotate(angle3);
-    strokeWeight(15);
+    strokeWeight(10);
     arc(0, 0, 75, 75, -150, 0);
     if(amp > 200){
         if(mid > 100){
@@ -323,7 +326,7 @@ function keyPressed() {
 
   class Particle{
     constructor(){
-        this.pos = p5.Vector.random2D().mult(125);
+        this.pos = p5.Vector.random2D().mult(50);
         this.speed = createVector(0,0);
         this.start = this.pos.copy().mult(random(0.0001, 0.00001));
         this.w = random(3,5);
@@ -348,12 +351,12 @@ function keyPressed() {
             fill(0, 28, 112);
           } 
         
-        this.size = 4;
+        this.size = 3;
         if(cond){
             this.pos.add(this.speed)
             this.pos.add(this.speed)
             this.pos.add(this.speed)
-            this.size = 8;
+            this.size = 6;
 
             if (image_num == 2){
                 fill(255, 0, 255);
