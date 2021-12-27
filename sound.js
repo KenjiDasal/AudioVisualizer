@@ -5,20 +5,36 @@ let angle2 = 0;
 let angle3 = 0;
 let amp;
 
+let eq;
+
 song = [];
 let song_num = 1;
 
 let img = [];
 let image_num = 1;
 
-function preload() {
+let toggle1 = 0;
+let toggle2 = 0;
+let toggle3 = 0;
+let toggle4 = 0;
 
+let params = {
+  vol: 100,
+  volMin: 0,
+  volMax: 100,
+
+}
+
+let gui;
+
+function preload() {
+    /*----------  SONGS  ----------*/
     song1 = loadSound('playlist/01.mp3');
     song2 = loadSound('playlist/02.mp3');
     song3 = loadSound('playlist/03.mp3');
     song4 = loadSound('playlist/04.mp3');
 
-
+    /*----------  IMAGES  ----------*/
     img[1] = loadImage('images/arcane1.jpg');
     img[2] = loadImage('images/arcane2.jpg');
     img[3] = loadImage('images/vi.jpg');
@@ -33,49 +49,69 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES)
   background(0);
-  fft = new p5.FFT()
+  fft = new p5.FFT(); 
+  gui = createGui('Music settings');
+  gui.addObject(params);
+
+  Button1 = createButton('#1 - Enemy - Imagine Dragon ft. JID');
+  Button2 = createButton('#2 - Playground - Bea Miller');
+  Button3 = createButton('#3 - Misfit Toys - Pusha T & Mako');
+  Button4 = createButton('#4 - Burn it all down - PVRIS ft. Denzel Curry');
+  
 }
 
 function draw() {
     background(0);
-    fft.analyze();
-    var amp = fft.getEnergy(100, 250);
-    var bass = fft.getEnergy("bass");
-    var treble = fft.getEnergy(100, 150);
+    fft.analyze(); // analyzes the frequency of hte music and creates an array based on the frequency
+    volume = params.vol/100 //im using the params to calculate the volume by dividing it by 100 and getting a decimal needed for the setVolume later
+    var amp = fft.getEnergy(100, 250); //I set the amp to only show frequency between 100 and 250 this will be helpful making effects
+    var bass = fft.getEnergy("bass"); //for Bass, Treble and Mid I used the same as amp but is looking for specific sounds -(Sadly this didnt help me on my work on adding effects)
+    var treble = fft.getEnergy("treble"); 
     var mid = fft.getEnergy("mid");
+
+
      /*----------  BACKGROUND  ----------*/
      if (amp > 200 && image_num == 1 || amp > 200 && image_num == 3 || amp > 200 && image_num == 5 || amp > 200 && image_num == 7) {
         image_num++;
     }
+    //this detects the amp and check for the image number if the amp goes above the required amp then the image_num goes up by 1 and changing the image for the song.
+
     if(amp <= 200){
         if (image_num ==2 || image_num == 4 || image_num == 6 || image_num == 8) {
           image_num --;
           console.log(image_num);
          }
     }
-
+    //this is the oposite and it goes back to the original image for the song.
     
     push();
     if (amp > 200){
-        rotate(random(-0.5, 0.5));
-        console.log('shake');
+        rotate(random(-0.5, 0.5)); //also checks for the amp and it shakes the image by -0.5 to 0.5 when amp is greater
+        console.log('shake');//used for detecting in the console
     }
-    image(img[image_num], 0, 0, width + 100, height + 100);
+    image(img[image_num], 0, 0, width + 100, height + 100); //this just shows the image based on (image_num, x, y, width, height) 
     pop();
     
-    
-   
+    /*----------  VOLUME  ----------*/
+    song1.setVolume(volume); //this sets the volume and changes it when the silder changes
+    song2.setVolume(volume);
+    song3.setVolume(volume);
+    song4.setVolume(volume);
 
-
+    // filter = new p5.BandPass();
+    // song1.disconnect();
+    // song1.connect(filter);
     
-    alpha = map(amp, 0, 255, 180, 150)
-    fill(0, alpha)
-    noStroke();
-    rect(0, 0, width, height);
+
+      /*----------  CONDITIONS  ----------*/  
+      alpha = map(amp, 0, 255, 180, 150) //this is the opacity for the filter on top of the image to give the visualisers more light -{it changes based on the amp}
+      fill(0, alpha)//Black filter and opacity set based on the map of the alpha
+      noStroke();
+      rect(0, 0, width, height);
 
 
     /*----------  STROKE COLOR  ----------*/
-    if (image_num == 1 && amp < 200){
+    if (image_num == 1 && amp < 200){ //these acts like the images but is changing the color of the stroke
         stroke(142, 184, 255);
       } else if (image_num == 2){
         stroke(255, 0, 255);
@@ -98,77 +134,134 @@ function draw() {
       } else if (image_num == 8){
         stroke(107, 0, 189);
       }
+    
     strokeWeight(3);
     noFill();
 
    
-    translate(width/2, height/2);
+    translate(width/2, height/2); //This translates (0, 0) of the screen to half of the given widht and height
     
-    wave = fft.waveform();
+    wave = fft.waveform(); //this returns an array of amplitude values (between -1.0 and +1.0) and represent a snapshot of amplitude readings in a single buffer.
 
-    for ( t = -1; t <= 1; t += 2) {
+    for ( t = -1; t <= 1; t += 2) { //I inputed any loops and the shape of the visualisers in here
     
 
     /*----------  MID  ----------*/
     beginShape();
-    for( i = 0; i <= 180; i ++) {
-         index = floor(map(i, 0, 180, 0, wave.length - 1))
+    for( i = 0; i < 180; i += 0.5) {
+         index = floor(map(i, 0, 180, 0, wave.length - 1)) // the indexes are calculating the floor value of the map in order to arrange the wave to form a circle for the upcoming equation
+        //  floor(map(value, start1, stop1, start2, stop2))
 
-        var r1Min = map(wave[index], -1, 1, 50, mid/2);
+        var r1Min = map(wave[index], -1, 1, 50, mid/2); // this is a range to make the Mid Visualiser have more fluid and more reactive behaviour than the other two
         var r1Max = map(wave[index], -1, 1, mid, 0);
 
         var r2Min = map(wave[index] / 2, -1, 1, mid, 50);
-        var r2Max = map(wave[index], -1, 1, 0, mid/2);    
+        var r2Max = map(wave[index], -1, 2, 0, mid/2);    
 
-        var r1 = map(wave[index], -1, 1, r1Min+50, r1Max)
+        var r1 = map(wave[index], -1, 1, r1Min+50, r1Max)// this is another maps that contains the ranges and will be added to the end
         var r2 = map(wave[index], -1, 1, r2Min, r2Max+50)
 
         r = r1 + r2
 
-         x = r * sin(i) * t
+         x = r * -sin(i) * t
          y = r * cos(i)
         vertex(x, y)
     }
     endShape();
 
     /*----------  BASS  ----------*/
+    // beginShape();
+    // for( i = 0; i <= 180; i ++) {
+    //      index = floor(map(i, 0, 180, 0, wave.length - 1))
+
+    //      r = map(wave[index], -1, 3, bass, bass+75)
+
+    //      x = r * sin(i) * t
+    //      y = r * cos(i)
+    //     vertex(x, y)
+    // }
+    // endShape();
+
+    push();
     beginShape();
-    for( i = 0; i <= 180; i ++) {
-         index = floor(map(i, 0, 180, 0, wave.length - 1))
+    for (i = 0; i <= 180 ; i++) {
+      index = floor(map(i, 0, 180, 0, wave.length - 1)) //this is a version of the first but this is less responsive than the other two
+      var r = map(wave[index], 0, 1, bass, bass); //only having to end with the base and wont have the same behaviour as the others
+      var x = r*sin(i)*t; // not minus sin
+      var y = r*cos(i);
+      strokeWeight(1);
 
-         r = map(wave[index], -1, 3, bass, bass+75)
+      if (image_num == 1 && amp < 200){ //this is here due to the nature of the opacity in stroke or fill 
+        stroke(142, 184, 255, 70); // this only adds the opacity of the lines
+      } else if (image_num == 2){
+        stroke(255, 0, 255, 70);
+      }
+    
+      if (image_num == 3 && amp < 200){
+        stroke(169, 47, 64, 70);
+      } else if (image_num == 4){
+        stroke(46, 56, 242, 70);
+      }
 
-         x = r * sin(i) * t
-         y = r * cos(i)
-        vertex(x, y)
+      if (image_num == 5 && amp < 200){
+        stroke(255, 255, 255, 70);
+      } else if (image_num == 6){
+        stroke(57, 255, 20, 70);
+      }
+
+      if (image_num == 7 && amp < 200){
+        stroke(0, 28, 112, 70);
+      } else if (image_num == 8){
+        stroke(107, 0, 189, 70);
+      }
+
+      line(0,0,x,y); //I used lines to show the bass of the music
     }
     endShape();
+    pop();
+    
 
     /*----------  TREBLE  ----------*/
-    beginShape();
-    for( i = 0; i <= 180; i ++) {
-        index = floor(map(i, 0, 180, 0, wave.length - 1))
+    // beginShape();
+    // for( i = 0; i <= 180; i ++) {
+    //     index = floor(map(i, 0, 180, 0, wave.length - 1))
 
-        r1 = map(wave[index], -1, 1, treble/2, 0)
-        r2 = map(wave[index], -1, 1, 0, treble+50)
+    //     r1 = map(wave[index], -1, 1, treble/2, 0)
+    //     r2 = map(wave[index], -1, 1, 0, treble+50)
 
-        r = r1 + r2        
+    //     r = r1 + r2        
 
-        x = r * sin(i) * t
-        y = r * cos(i)
-        vertex(x, y)
-    }
-    endShape();
+    //     x = r * sin(i) * t
+    //     y = r * cos(i)
+    //     vertex(x, y)
+    // }
+    // endShape();
+
+    
+
+    let spectrum = fft.analyze(); // option of fft - returnes array of amplitude values (0 to 255) {this acts like the amp but ill be using it in a equation for the visualiser}
+
+    push();
+      beginShape();
+      for (i = 0; i < 180; i++) { // 180 is number of dots going around
+        var r = map(spectrum[i], 0, 180 , 150+treble, 200+treble);
+        var x = r * -sin(i) * t;
+        var y = r * cos(i);
+        strokeWeight(4);
+        point(x, y); //this will onlyp displays dots
+      }
+      endShape();
+    pop();
 
     /*---------- ROTORS  ----------*/
 
-    beginShape();
+    beginShape(); // the rotors is just here to add some rotating factors in my projects
     
     push();
     rotate(angle);
     strokeWeight(5);
     arc(0, 0, 25, 25, 100, -50);
-    if(amp > 200){
+    if(amp > 200){//when the amp goes over 200 the speed of the rotors increases but slows down when bellow
         if(mid > 100){
             angle += 5;
         }
@@ -206,45 +299,63 @@ function draw() {
     endShape();
     }
     
+    /*---------- PARTICLES  ----------*/
     
-    
-
-    
-    
-    
-
-    p = new Particle()
+    p = new Particle(); //for my particle system im using vector2d to project the particles in a random point in a circle
     particles.push(p)
 
     for (var i = 0; i < particles.length; i++){
-        particles[i].update(amp > 200);
+        particles[i].update(amp > 200); // this notifies the particle system to update if amp is over 200
         particles[i].show()
     }
+
+
+    /*---------- BUTTONS  ----------*/
+    Button1.position(50, windowHeight-50); // position of the button
+    Button1.mousePressed(Pressed1); //when the button is pressed it calls the Pressed1() function
+
+    Button2.position(220, windowHeight-50);
+    Button2.mousePressed(Pressed2);
+
+    Button3.position(357, windowHeight-50);
+    Button3.mousePressed(Pressed3);
+
+    Button4.position(517, windowHeight-50);
+    Button4.mousePressed(Pressed4);
+
 }
 
-function keyPressed() {
-    if(keyCode === 49){
-      song = song1;
-      image_num = 1;
+
+  function Pressed1(){
+    if (toggle1 = 1) { // im using numbers instead of boolean values due to it being more faster and dont require the button to be double clicked
+      song = song1; //this picks the song
+      image_num = 1;//this replaces the main image
       console.log(image_num)
-      if(song3.isPlaying()){
+      if(song3.isPlaying()){//this stops other songs
         song3.stop();
-      }
-      if(song2.isPlaying()){
-        song2.stop();
       }
       if(song4.isPlaying()){
         song4.stop();
       }
-      if(!song.isPlaying()){
-      song.play();
-      console.log('isPlaying')
-    }else{
-      song.pause();
-      console.log('isPaused')
+      if(song2.isPlaying()){
+        song2.stop();
+      }
+      if(!song.isPlaying()){//this detects if the song is not playing and it plays it
+        song.play();
+        console.log('isPlaying')
+      }else{// it will pause the song if the song is playing when clicked again
+        song.pause();
+        console.log('isPaused')
+      }
+      toggle1 = 0;
+    } else {
+      toggle1 = 1;
     }
-    }
-    if(keyCode === 50){
+
+  }
+  function Pressed2(){
+    if (toggle2 = 1) {
+      console.log('pressed');
       song = song2;
       image_num = 3;
       console.log(image_num)
@@ -259,15 +370,19 @@ function keyPressed() {
       }
       if(!song.isPlaying()){
       song.play();
-      console.log('isPlaying')
-      console.log(song)
+      console.log(song, 'isPlaying');
     }else{
       song.pause();
       console.log('isPaused')
     }
+      toggle2 = 0;
+    } else {
+      toggle2 = 1;
     }
-  
-    if(keyCode === 51){
+  }
+  function Pressed3(){
+    if (toggle3 = 1) {
+      console.log('pressed');
       song = song3;
       image_num = 5;
       console.log(image_num)
@@ -287,8 +402,14 @@ function keyPressed() {
       song.pause();
       console.log('isPaused')
     }
+      toggle3 = 0;
+    } else {
+      toggle3 = 1;
     }
-    if(keyCode === 52){
+  }
+  function Pressed4(){
+    if (toggle4 = 1) {
+      console.log('pressed');
       song = song4;
       image_num = 7;
       console.log(image_num)
@@ -309,6 +430,28 @@ function keyPressed() {
       song.pause();
       console.log('isPaused')
     }
+      toggle4 = 0;
+    } else {
+      toggle4 = 1;
+    }
+  }
+
+  
+  
+  
+function keyPressed() {
+    if(keyCode === 49){
+     Pressed1();
+    }
+    if(keyCode === 50){
+      Pressed2();
+    }
+  
+    if(keyCode === 51){
+      Pressed3();
+    }
+    if(keyCode === 52){
+     Pressed4();
     }
     if(keyCode === ENTER){
       if(!song.isPlaying()){
@@ -320,64 +463,3 @@ function keyPressed() {
       }
     }
   }
-
-
-
-
-  class Particle{
-    constructor(){
-        this.pos = p5.Vector.random2D().mult(50);
-        this.speed = createVector(0,0);
-        this.start = this.pos.copy().mult(random(0.0001, 0.00001));
-        this.w = random(3,5);
-    }
-
-    update(cond){
-        this.speed.add(this.start)
-        this.pos.add(this.speed)
-
-        if (image_num == 1){
-            fill(142, 184, 255);
-          }
-          if (image_num == 3){
-            fill(169, 47, 64);
-          } 
-
-          if (image_num == 5){
-            fill(255, 255, 255);
-          } 
-
-          if (image_num == 7){
-            fill(0, 28, 112);
-          } 
-        
-        this.size = 3;
-        if(cond){
-            this.pos.add(this.speed)
-            this.pos.add(this.speed)
-            this.pos.add(this.speed)
-            this.size = 6;
-
-            if (image_num == 2){
-                fill(255, 0, 255);
-              }
-            
-            if (image_num == 4){
-                fill(46, 56, 242);
-              }
-
-            if (image_num == 6){
-              fill(57, 255, 20);
-            }
-
-            if (image_num == 8){
-              fill(107, 0, 189);
-            }
-        }
-    }
-
-    show(){
-        noStroke();
-        ellipse(this.pos.x, this.pos.y, this.size);
-    }
-}
