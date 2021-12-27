@@ -1,0 +1,15 @@
+a{
+margin-top: 10px;
+justify-content: center;
+text-align: center;
+border: 3px solid crimson;
+padding: 5px;
+font-size: 3rem;
+color:crimson;
+text-decoration: none;
+}
+
+a:hover{
+    border: 3px solid rgb(72, 1, 16);
+    color:rgb(72, 1, 16);
+}

@@ -57,6 +57,7 @@ function setup() {
   Button2 = createButton('#2 - Playground - Bea Miller');
   Button3 = createButton('#3 - Misfit Toys - Pusha T & Mako');
   Button4 = createButton('#4 - Burn it all down - PVRIS ft. Denzel Curry');
+  button5 = createA('https://kenjidasal.github.io/CA-Portfolio/', 'Return to Homepage');
   
 }
 
@@ -322,6 +323,8 @@ function draw() {
 
     Button4.position(517, windowHeight-50);
     Button4.mousePressed(Pressed4);
+
+    Button.position(617, windowHeight-50);
 
 }
 
